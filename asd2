@@ -1,0 +1,219 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+    
+    def tambah_di_awal(self, data):
+        new_node = Node(data)
+        new_node.next = self
+        return new_node
+
+    def tambah_di_tengah(self, data):
+        new_node = Node(data)
+        temp = self.next
+        self.next = new_node
+        new_node.next = temp
+        return self
+
+    def tambah_di_akhir(self, data):
+        current = self
+        while current.next:
+            current = current.next
+        current.next = Node(data)
+        return self
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def tambah_di_awal(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
+    def tambah_di_akhir(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node
+            return
+        last_node = self.head
+        while last_node.next:
+            last_node = last_node.next
+        last_node.next = new_node
+
+    def tambah_di_tengah(self, prev_node, data):
+        if not prev_node:
+            print("Node sebelumnya tidak ditemukan")
+            return
+        new_node = Node(data)
+        new_node.next = prev_node.next
+        prev_node.next = new_node
+
+    def hapus_di_awal(self):
+        if self.head is None:
+            print("Linked list kosong")
+            return
+        temp = self.head
+        self.head = self.head.next
+        temp = None
+
+    def hapus_di_akhir(self):
+        if self.head is None:
+            print("Linked list kosong")
+            return
+        second_last = self.head
+        while second_last.next.next:
+            second_last = second_last.next
+        second_last.next = None
+
+    def hapus_di_tengah(self, prev_node):
+        if not prev_node or not prev_node.next:
+            print("Node sebelumnya tidak ditemukan")
+            return
+        temp = prev_node.next
+        prev_node.next = prev_node.next.next
+        temp = None
+
+class KasirRestoran:
+    def __init__(self):
+        self.menu = LinkedList()
+        self.pesanan = LinkedList()
+
+    def tambah_menu(self, nama, harga):
+        self.menu.tambah_di_akhir({"nama": nama, "harga": harga})
+        print(f"Menu '{nama}' telah ditambahkan dengan harga Rp{harga}")
+
+    def lihat_menu(self):
+        if self.menu.head is None:
+            print("Menu restoran kosong")
+        else:
+            print("Menu Restoran:")
+            current = self.menu.head
+            while current:
+                print(f"{current.data['nama']}: Rp{current.data['harga']}")
+                current = current.next
+
+    def ubah_harga(self, nama, harga_baru):
+        current = self.menu.head
+        while current:
+            if current.data["nama"] == nama:
+                current.data["harga"] = harga_baru
+                print(f"Harga untuk '{nama}' telah diubah menjadi Rp{harga_baru}")
+                return
+            current = current.next
+        print(f"'{nama}' tidak ada dalam menu")
+
+    def hapus_menu(self, nama):
+        prev_node = None
+        current = self.menu.head
+        while current:
+            if current.data["nama"] == nama:
+                if prev_node is None:
+                    self.menu.hapus_di_awal()
+                else:
+                    self.menu.hapus_di_tengah(prev_node)
+                print(f"Menu '{nama}' telah dihapus dari daftar")
+                return
+            prev_node = current
+            current = current.next
+        print(f"'{nama}' tidak ada dalam menu")
+
+    def pesan_menu(self, nama, jumlah):
+        current = self.menu.head
+        while current:
+            if current.data["nama"] == nama:
+                current_pesanan = self.pesanan.head
+                while current_pesanan:
+                    if current_pesanan.data["nama"] == nama:
+                        current_pesanan.data["jumlah"] += jumlah
+                        break
+                    current_pesanan = current_pesanan.next
+                else:
+                    self.pesanan.tambah_di_akhir({"nama": nama, "jumlah": jumlah})
+                print(f"{jumlah} porsi '{nama}' telah ditambahkan ke dalam pesanan")
+                return
+            current = current.next
+        print(f"'{nama}' tidak ada dalam menu")
+
+    def lihat_pesanan(self):
+        if self.pesanan.head is None:
+            print("Pesanan Anda kosong")
+        else:
+            print("Pesanan Anda:")
+            current = self.pesanan.head
+            while current:
+                print(f"{current.data['nama']}: {current.data['jumlah']} x Rp{self.get_harga_menu(current.data['nama'])} = Rp{current.data['jumlah']*self.get_harga_menu(current.data['nama'])}")
+                current = current.next
+
+    def total_belanja(self):
+        total = 0
+        current = self.pesanan.head
+        while current:
+            total += current.data["jumlah"] * self.get_harga_menu(current.data["nama"])
+            current = current.next
+        return total
+
+    def cetak_struk(self):
+        if self.pesanan.head is None:
+            print("Pesanan masih kosong")
+        else:
+            print("======= STRUK BELANJA =======")
+            current = self.pesanan.head
+            while current:
+                print(f"{current.data['nama']} \t {current.data['jumlah']} \t Rp{current.data['jumlah']*self.get_harga_menu(current.data['nama'])}")
+                current = current.next
+            print("==============================")
+            print(f"Total Belanja: Rp{self.total_belanja()}")
+
+    def get_harga_menu(self, nama):
+        current = self.menu.head
+        while current:
+            if current.data["nama"] == nama:
+                return current.data["harga"]
+            current = current.next
+        return 0
+
+if __name__ == "__main__":
+    kasir = KasirRestoran()
+
+    while True:
+        print("-" * 30)
+        print("  MENU KASIR RESTORAN LOLY  ")
+        print("-" * 30)
+        print("1. Tambah menu")
+        print("2. Lihat menu")
+        print("3. Ubah harga menu")
+        print("4. Hapus menu")
+        print("5. Pesan menu")
+        print("6. Lihat pesanan belanja")
+        print("7. Cetak struk belanja")
+        print("8. Keluar")
+
+        pilihan = input("Pilih menu (1/2/3/4/5/6/7/8): ")
+
+        if pilihan == '1':
+            nama = input("Masukkan nama menu: ")
+            harga = int(input("Masukkan harga menu: "))
+            kasir.tambah_menu(nama, harga)
+        elif pilihan == '2':
+            kasir.lihat_menu()
+        elif pilihan == '3':
+            nama = input("Masukkan nama menu yang ingin diubah harganya: ")
+            harga_baru = int(input("Masukkan harga baru: "))
+            kasir.ubah_harga(nama, harga_baru)
+        elif pilihan == '4':
+            nama = input("Masukkan nama menu yang ingin dihapus: ")
+            kasir.hapus_menu(nama)
+        elif pilihan == '5':
+            nama = input("Masukkan nama menu yang ingin dipesan: ")
+            jumlah = int(input("Masukkan jumlah porsi: "))
+            kasir.pesan_menu(nama, jumlah)
+        elif pilihan == '6':
+            kasir.lihat_pesanan()
+        elif pilihan == '7':
+            kasir.cetak_struk()
+        elif pilihan == '8':
+            print("Terima kasih sudah menggunakan program ini!")
+            break
+        else:
+            print("Pilihan tidak valid. Silakan pilih nomor menu yang sesuai.")
