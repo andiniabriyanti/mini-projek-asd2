@@ -79,9 +79,25 @@ class KasirRestoran:
         self.menu = LinkedList()
         self.pesanan = LinkedList()
 
-    def tambah_menu(self, nama, harga):
-        self.menu.tambah_di_akhir({"nama": nama, "harga": harga})
-        print(f"Menu '{nama}' telah ditambahkan dengan harga Rp{harga}")
+    def tambah_menu(self, nama, harga, posisi):
+        if posisi == 'awal':
+            self.menu.tambah_di_awal({"nama": nama, "harga": harga})
+            print(f"Menu '{nama}' telah ditambahkan di awal dengan harga Rp{harga}")
+        elif posisi == 'akhir':
+            self.menu.tambah_di_akhir({"nama": nama, "harga": harga})
+            print(f"Menu '{nama}' telah ditambahkan di akhir dengan harga Rp{harga}")
+        elif posisi == 'tengah':
+            nama_sebelum = input("Masukkan nama menu sebelumnya: ")
+            current = self.menu.head
+            while current:
+                if current.data["nama"] == nama_sebelum:
+                    current.tambah_di_tengah({"nama": nama, "harga": harga})
+                    print(f"Menu '{nama}' telah ditambahkan setelah '{nama_sebelum}' dengan harga Rp{harga}")
+                    return
+                current = current.next
+            print(f"'{nama_sebelum}' tidak ditemukan dalam menu")
+        else:
+            print("Posisi tidak valid")
 
     def lihat_menu(self):
         if self.menu.head is None:
@@ -92,6 +108,8 @@ class KasirRestoran:
             while current:
                 print(f"{current.data['nama']}: Rp{current.data['harga']}")
                 current = current.next
+
+
 
     def ubah_harga(self, nama, harga_baru):
         current = self.menu.head
@@ -180,39 +198,52 @@ if __name__ == "__main__":
         print("-" * 30)
         print("  MENU KASIR RESTORAN LOLY  ")
         print("-" * 30)
-        print("1. Tambah menu")
-        print("2. Lihat menu")
-        print("3. Ubah harga menu")
-        print("4. Hapus menu")
-        print("5. Pesan menu")
-        print("6. Lihat pesanan belanja")
-        print("7. Cetak struk belanja")
-        print("8. Keluar")
+        print("1. Tambah menu di awal")
+        print("2. Tambah menu di akhir")
+        print("3. Tambah menu di antara")
+        print("4. Lihat menu")
+        print("5. Ubah harga menu")
+        print("6. Hapus menu")
+        print("7. Pesan menu")
+        print("8. Lihat pesanan belanja")
+        print("9. Cetak struk belanja")
+        print("10. Keluar")
 
-        pilihan = input("Pilih menu (1/2/3/4/5/6/7/8): ")
+        pilihan = input("Pilih menu (1/2/3/4/5/6/7/8/9/10): ")
 
         if pilihan == '1':
             nama = input("Masukkan nama menu: ")
             harga = int(input("Masukkan harga menu: "))
-            kasir.tambah_menu(nama, harga)
+            posisi = input("Tambah di awal, akhir, atau tengah?: ")
+            kasir.tambah_menu(nama, harga, posisi)
         elif pilihan == '2':
-            kasir.lihat_menu()
+            nama = input("Masukkan nama menu: ")
+            harga = int(input("Masukkan harga menu: "))
+            posisi = input("Tambah di awal, akhir, atau tengah?: ")
+            kasir.tambah_menu(nama, harga, posisi)
         elif pilihan == '3':
+            nama = input("Masukkan nama menu yang ingin ditambahkan: ")
+            harga = int(input("Masukkan harga menu: "))
+            posisi = 'tengah'
+            kasir.tambah_menu(nama, harga, posisi)
+        elif pilihan == '4':
+            kasir.lihat_menu()
+        elif pilihan == '5':
             nama = input("Masukkan nama menu yang ingin diubah harganya: ")
             harga_baru = int(input("Masukkan harga baru: "))
             kasir.ubah_harga(nama, harga_baru)
-        elif pilihan == '4':
+        elif pilihan == '6':
             nama = input("Masukkan nama menu yang ingin dihapus: ")
             kasir.hapus_menu(nama)
-        elif pilihan == '5':
+        elif pilihan == '7':
             nama = input("Masukkan nama menu yang ingin dipesan: ")
             jumlah = int(input("Masukkan jumlah porsi: "))
             kasir.pesan_menu(nama, jumlah)
-        elif pilihan == '6':
-            kasir.lihat_pesanan()
-        elif pilihan == '7':
-            kasir.cetak_struk()
         elif pilihan == '8':
+            kasir.lihat_pesanan()
+        elif pilihan == '9':
+            kasir.cetak_struk()
+        elif pilihan == '10':
             print("Terima kasih sudah menggunakan program ini!")
             break
         else:
